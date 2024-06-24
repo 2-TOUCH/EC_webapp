@@ -1,8 +1,8 @@
+### Important This repository was a group effort, with this version posted on GitHub for the sake of portfolio, with the repository owner being 1 of 4 contributors.
+
 # EcoCAR Access Web Application
 
 This application serves as a basis to fill out the interest form to join ECOCAR and successfully onboard new team members.
-**Important** This repository was a group effort, with this version posted on GitHub for the sake of portfolio, with the repository owner being 1 of 4 contributors.
-
 
 ## Download the Code from BitBucket
 
