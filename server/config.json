@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "docker",
+    "database": "ecocar",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}

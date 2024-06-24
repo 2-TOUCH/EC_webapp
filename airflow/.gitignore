@@ -1,0 +1,6 @@
+./dags/.env
+./dags/__pycache__
+/logs/
+/plugins/
+/dags/__pycache__/
+/credentials/Google-ServiceAccounts-Credentials.json

@@ -1,0 +1,35 @@
+{
+  "name": "ecocar_webapp",
+  "version": "1.0.0",
+  "description": "EcoCAR UC Davis Application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://ecocar-bitbucket.engineering.ucdavis.edu/scm/pm/ecocar_webapp.git"
+  },
+  "keywords": [
+    "nodejs",
+    "ecocar",
+    "webapp"
+  ],
+  "author": "ajaysk",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.1",
+    "pg": "^8.9.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.29.0",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
