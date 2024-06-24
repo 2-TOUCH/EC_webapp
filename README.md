@@ -1,4 +1,5 @@
-### Important This repository was a group effort, with this version posted on GitHub for the sake of portfolio, with the repository owner being 1 of 4 contributors.
+### Important 
+This repository was a group effort, with this version posted on GitHub for the sake of portfolio, with the repository owner being 1 of 4 contributors.
 
 # EcoCAR Access Web Application
 
