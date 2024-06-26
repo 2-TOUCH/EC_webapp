@@ -106,10 +106,7 @@ You need to create three `.env` files:
 7. Then select **PostgreSQL** (The elephant logo).
 8. Input the essential keys to connect to the database:
    \```bash
-   Host: localhost
-   Database: ecocar
-   Username: postgres
-   Password: docker
+
    \```
 9. Then click **Finish**.
 
@@ -122,8 +119,7 @@ http://localhost:8080/
 \```
 The user and password are currently default as:
 \```bash
-User: airflow
-Password: airflow
+
 \```
 
 ### Configure the Connection with the Database
