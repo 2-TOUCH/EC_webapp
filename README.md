@@ -9,9 +9,109 @@ This application serves as a basis to fill out the interest form to join ECOCAR 
 
 Clone the project:
 
-\```bash
+```bash
 git clone -b "branch name" https://ecocar-bitbucket.engineering.ucdavis.edu/scm/pm/ecocar_webapp.git
-\```
+```
+
+## Running the Project Locally
+
+The app is split into three parts that run separately: a **PostgreSQL** database, an **Express/Node.js** backend, and a **React** frontend. **Airflow** is optional and only needed for the automated onboarding workflow (emails, Jira/Confluence/DocuSign).
+
+### 1. Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (runs the database and, optionally, Airflow)
+- [Node.js](https://nodejs.org/) 18 LTS or newer (includes `npm`)
+- Git
+
+### 2. Create the `.env` files
+
+Before starting anything, follow [Create .env Files](#create-env-files) to create the three `.env` files (root, `airflow/dags`, and `server`). At minimum, the `server` `.env` must point at the local database:
+
+```bash
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ecocar
+DB_USER=postgres
+DB_PASSWORD=docker
+EMAIL_USERNAME=your_email_address_that_you_want_to_send_email_out
+EMAIL_PASSWORD=the_App_Password_you_created_before
+IT_DEPT_EMAIL=email_address_that_you_want_to_send_email_to_as_if_it_is_the_IT_Dept
+```
+
+### 3. Start the database
+
+From the **ecocar_webapp** root directory, start just the Postgres container:
+
+```bash
+docker compose up -d db
+```
+
+This creates the `ecocar` database (with user `postgres` / password `docker`) and exposes it on `localhost:5432`. The first build can take a minute. To check that it is healthy:
+
+```bash
+docker compose ps
+```
+
+> If you are on an older Docker install, use `docker-compose` instead of `docker compose`.
+
+### 4. Start the backend
+
+In a new terminal:
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+The API runs at [http://localhost:5000](http://localhost:5000). On startup Sequelize connects to Postgres, creates the tables it needs, and logs `Database Connected` followed by `Server running on PORT 5000`.
+
+- `npm run dev` runs the server with `nodemon`, so it restarts on file changes.
+- If you do not want auto-restart, run `node server.js` instead.
+- The server exits if it cannot reach the database, so make sure step 3 finished first.
+
+### 5. Start the frontend
+
+In another new terminal:
+
+```bash
+cd client
+npm install
+npm start
+```
+
+The app opens at [http://localhost:3000](http://localhost:3000) and reloads on changes. It calls the backend directly at `http://localhost:5000`, so the backend must be running for requests to succeed.
+
+### 6. (Optional) Start Airflow
+
+The onboarding automations live in Airflow. To run the full stack, use the root `docker-compose.yml`:
+
+```bash
+docker compose up -d
+```
+
+This builds the Airflow image, runs the database initialisation container, and starts the webserver, scheduler, and triggerer. Give it a minute, then open [http://localhost:8080](http://localhost:8080) and log in with `airflow` / `airflow`.
+
+After logging in, add the Postgres connection described in [Configure the Connection with the Database](#configure-the-connection-with-the-database), then unpause the DAGs on the home page. See [Airflow](#airflow) for the full walkthrough.
+
+### Stopping everything
+
+```bash
+# Stop the containers but keep the database data
+docker compose down
+
+# Also delete the database volume (fresh start next time)
+docker compose down -v
+```
+
+Press `Ctrl+C` in the backend and frontend terminals to stop them.
+
+### Troubleshooting
+
+- **Port already in use (3000, 5000, 5432, 8080):** stop the process using it, or change the corresponding port in `docker-compose.yml` / `.env`.
+- **`ECONNREFUSED` from the backend:** Postgres is not running or the `DB_*` values in `server/.env` are wrong. Run `docker compose up -d db` again and check `docker compose ps`.
+- **Frontend cannot reach the API:** confirm the backend is running on port `5000` and that `client/package.json` still has `"proxy": "http://localhost:5000"`.
+- **Airflow containers keep restarting:** ensure Docker has at least 4 GB of memory and 2 CPUs allocated, and that `airflow/credentials/Google-ServiceAccounts-Credentials.json` exists.
 
 ## Pre-requisites
 
@@ -56,13 +156,13 @@ You need to create three `.env` files:
 
 1. Under the **ecocar_webapp** directory:
    Create a `.env` file named `.env` and write:
-   \```bash
+   ```bash
    AIRFLOW_UID=1000
-   \```
+   ```
 
 2. Under the **ecocar_webapp/airflow/dags** directory:
    Create a `.env` file named `.env` and write:
-   \```bash
+   ```bash
    EMAIL_USERNAME=your_email_address_that_you_want_to_send_email_out
    EMAIL_PASSWORD=the_App_Password_you_created_before
    CONSUMER_KEY=OauthKey
@@ -76,11 +176,11 @@ You need to create three `.env` files:
    DOCUSIGN_API_ACCOUNT_ID=a9ab76b0-4fe9-4f65-aa20-f091bad8969c
    DOCUSIGN_PHOTO_WAIVER_TEMPLATE_ID=7600bb70-d0ce-4b64-85e1-af6c908b77cb
    DOCUSIGN_UPA_TEMPLATE_ID=
-   \```
+   ```
 
 3. Under the **ecocar_webapp/server** directory:
    Create a `.env` file named `.env` and write:
-   \```bash
+   ```bash
    DB_HOST=localhost
    DB_PORT=5432
    DB_NAME=ecocar
@@ -89,7 +189,7 @@ You need to create three `.env` files:
    EMAIL_USERNAME=your_email_address_that_you_want_to_send_email_out
    EMAIL_PASSWORD=the_App_Password_you_created_before
    IT_DEPT_EMAIL=email_address_that_you_want_to_send_email_to_as_if_it_is_the_IT_Dept
-   \```
+   ```
 
 ## Connect to PostgreSQL Database
 
@@ -97,37 +197,37 @@ You need to create three `.env` files:
 2. Open **Docker**.
 3. Navigate to the **ecocar_webapp** directory.
 4. Run:
-   \```bash
+   ```bash
    docker-compose up
-   \```
+   ```
 
 5. Install **dBeaver** or any other database connector application.
 6. In the menu bar on top, click **New Database Connection** (in dBeaver).
 7. Then select **PostgreSQL** (The elephant logo).
 8. Input the essential keys to connect to the database:
-   \```bash
+   ```bash
 
-   \```
+   ```
 9. Then click **Finish**.
 
 ## Airflow
 
 ### After Everything is Up, Go to the Webserver of Airflow
 
-\```bash
+```bash
 http://localhost:8080/
-\```
+```
 The user and password are currently default as:
-\```bash
+```bash
 
-\```
+```
 
 ### Configure the Connection with the Database
 
 1. At the top bar, hover on **Admin**.
 2. Click on **Connections** in the drop-down menu.
 3. Click the button **next to Action** to add a new record.
-   \```bash
+   ```bash
    Connection Id: postgres_ecocar
    Connection Type: Postgres
    Host: host.docker.internal
@@ -135,7 +235,7 @@ The user and password are currently default as:
    Login: postgres
    Password: docker
    Port: 5432
-   \```
+   ```
 4. Then click "Save".
 
 ### Go Back to Home Page
@@ -146,9 +246,9 @@ Unpause all the tasks by switching the button on the left. Then Airflow is runni
 
 ### Front-end
 
-\```bash
+```bash
 http://localhost:3000/
-\```
+```
 1. Fill in corresponding info.
 2. Click Submit.
 3. This member will then be inserted into the **EcocarAccessRequests** database table, awaiting approval from the team lead first.
@@ -157,9 +257,9 @@ http://localhost:3000/
 
 ### Airflow
 
-\```bash
+```bash
 http://localhost:8080/
-\```
+```
 1. Unpause the task.
 2. Trigger the task on the right end of the task interface.
 3. You should be getting an email saying "Welcome aboard" soon.
